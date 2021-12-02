@@ -228,6 +228,7 @@ class GameState(object):
     def isWin(self):
         return self.data._win
 
+    #AVD Function - Jorge - Obtiene estado visible
     def getVisibleState(self):
         '''
         Returns the content of the adjacent squares
