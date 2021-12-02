@@ -238,6 +238,11 @@ class GameState(object):
         widthRange = 2
         heightRange = 2
 
+        # Getting info from the state
+        currentFood = self.getFood()
+        walls = self.getWalls()
+        ghosts = self.getGhostPositions()
+
         # Building the observable area
         pos = self.getPacmanPosition()
         if shape == 'cross':
@@ -254,11 +259,6 @@ class GameState(object):
             x = pos[0]
             for y in listY:
                 obsArea.append([x, y])
-
-        # Getting info from the state
-        currentFood = self.getFood()
-        walls = self.getWalls()
-        ghosts = self.getGhostPositions()
         
         # Observable state
         self.data.visState = []
@@ -267,7 +267,12 @@ class GameState(object):
             py = square[1]
             if square == pos:
                 continue
-            #elif # Fin del mapa
+            elif px >= currentFood.width:
+                self.data.visState.append('')
+                continue
+            elif py >= currentFood.height:
+                self.data.visState.append('')
+                continue
             elif currentFood.data[px][py] == True:
                 self.data.visState.append('f')
             elif walls.data[px][py] == True:
