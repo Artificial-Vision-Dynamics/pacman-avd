@@ -23,6 +23,7 @@ from past.utils import old_div
 from graphicsUtils import *
 import math, time
 from game import Directions
+from pacman import GameState
 
 ###########################
 #  GRAPHICS DISPLAY CODE  #
@@ -87,7 +88,6 @@ CAPSULE_SIZE = 0.25
 # Drawing walls
 WALL_RADIUS = 0.15
 
-
 class InfoPane(object):
     def __init__(self, layout, gridSize):
         self.gridSize = gridSize
@@ -142,7 +142,8 @@ class InfoPane(object):
             self.ghostDistanceText.append(t)
 
     def updateScore(self, score):
-        changeText(self.scoreText, "SCORE: % 4d" % score)
+        GS = GameState()
+        changeText(self.scoreText, "SCORE: % 4d" % (score))
 
     def setTeam(self, isBlue):
         text = "RED TEAM"

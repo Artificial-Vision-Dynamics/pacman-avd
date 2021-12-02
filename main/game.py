@@ -424,6 +424,7 @@ class GameStateData(object):
             self.layout = prevState.layout
             self._eaten = prevState._eaten
             self.score = prevState.score
+            self.visState = prevState.visState
 
         self._foodEaten = None
         self._foodAdded = None
@@ -441,6 +442,7 @@ class GameStateData(object):
         state._foodEaten = self._foodEaten
         state._foodAdded = self._foodAdded
         state._capsuleEaten = self._capsuleEaten
+        state.visState = self.visState
         return state
 
     def copyAgentStates(self, agentStates):
@@ -550,6 +552,7 @@ class GameStateData(object):
         self.layout = layout
         self.score = 0
         self.scoreChange = 0
+        self.visState = []
 
         self.agentStates = []
         numGhosts = 0

@@ -137,6 +137,7 @@ class GameState(object):
         state.data.score += state.data.scoreChange
         GameState.explored.add(self.__hash__())
         GameState.explored.add(state.__hash__())
+        self.getVisibleState()
         return state
 
     def getLegalPacmanActions(self):
@@ -238,45 +239,48 @@ class GameState(object):
         heightRange = 2
 
         # Building the observable area
-        pos = s.getPacmanPosition()
+        pos = self.getPacmanPosition()
         if shape == 'cross':
-            listX = range(pos(1) - widthRange, pos(1) - 1)
-            listX.append(range(pos(1) + , pos(1) + widthRange))
-            listY = range(pos(2) - heightRange, pos(2)- 1)
-            listY.append(range(pos(2) + 1, pos(2) + heightRange))
-            obsArea = [];
+            listX = list(range(pos[0] - widthRange, pos[0] ))
+            listX.extend(list(range(pos[0] + 1, pos[0] + widthRange + 1)))
+            listY = list(range(pos[1] - heightRange, pos[1]))
+            listY.extend(list(range(pos[1] + 1, pos[1] + heightRange + 1)))
 
-            y = pos(2)
+            obsArea = []
+
+            y = pos[1]
             for x in listX:
                 obsArea.append([x, y])
-            x = pos(1)
+            x = pos[0]
             for y in listY:
                 obsArea.append([x, y])
 
         # Getting info from the state
         currentFood = self.getFood()
         walls = self.getWalls()
-        ghosts = self.getGhostsPositions()
+        ghosts = self.getGhostPositions()
         
         # Observable state
-        i = 1
+        self.data.visState = []
         for square in obsArea:
+            px = square[0]
+            py = square[1]
             if square == pos:
                 continue
             #elif # Fin del mapa
-            elif currentFood(square) == True:
-                obsState[i] = 'f'
-            elif walls(square) == True:
-                obsState[i] = 'w'
+            elif currentFood.data[px][py] == True:
+                self.data.visState.append('f')
+            elif walls.data[px][py] == True:
+                self.data.visState.append('w')
             else:
-                obsState[i] = ''
                 for ghostPos in ghosts:
                     if square == ghostPos:
-                        obsState[i] = 'g'
-            
-            i += 1 
+                        self.data.visState.append('g')
+                        break
 
-        print(obsState)
+                self.data.visState.append('')
+
+        print(self.data.visState)
 
     #############################################
     #             Helper methods:               #
