@@ -42,6 +42,7 @@ The keys are 'a', 's', 'd', and 'w' to move (or arrow keys).  Have fun!
 from __future__ import print_function
 from future import standard_library
 
+
 standard_library.install_aliases()
 from builtins import str
 from builtins import range
@@ -54,6 +55,8 @@ from util import nearestPoint
 from util import manhattanDistance
 import util, layout
 import sys, types, time, random, os
+
+import json
 
 ###################################################
 # YOUR INTERFACE TO THE PACMAN WORLD: A GameState #
@@ -137,7 +140,7 @@ class GameState(object):
         state.data.score += state.data.scoreChange
         GameState.explored.add(self.__hash__())
         GameState.explored.add(state.__hash__())
-        self.getVisibleState()
+        #self.getVisibleState()
         return state
 
     def getLegalPacmanActions(self):
@@ -233,7 +236,6 @@ class GameState(object):
         '''
         Returns the content of the adjacent squares
         '''
-
         # Config parameters
         shape = 'cross'
         widthRange = 2
@@ -269,10 +271,10 @@ class GameState(object):
             if square == pos:
                 continue
             elif px >= currentFood.width:
-                self.data.visState.append('')
+                self.data.visState.append('w')
                 continue
             elif py >= currentFood.height:
-                self.data.visState.append('')
+                self.data.visState.append('w')
                 continue
             elif currentFood.data[px][py] == True:
                 self.data.visState.append('f')
@@ -284,9 +286,11 @@ class GameState(object):
                         self.data.visState.append('g')
                         break
 
-                self.data.visState.append('')
+                self.data.visState.append('e')
 
-        print(self.data.visState)
+        # el estado eje horizontal de la cruz y luego eje vertical
+        #print('Current state')
+        #print(self.data.visState)
 
     #############################################
     #             Helper methods:               #
@@ -312,11 +316,18 @@ class GameState(object):
         Allows two states to be compared.
         """
         return hasattr(other, "data") and self.data == other.data
-
-    def __hash__(self):
+    
+    # AVD - Rodrigo - modify to the visible state
+    def __visible_state_hash__(self):
         """
         Allows states to be keys of dictionaries.
         """
+        hash = ''
+        for i in range(len(self.data.visState)):
+            hash = hash + self.data.visState[i]
+        return hash
+
+    def __hash__(self):    
         hash_seperator = "|"
         #
         # Food Hash
@@ -403,6 +414,8 @@ class ClassicGameRules(object):
         agents = [pacmanAgent] + ghostAgents[: layout.getNumGhosts()]
         initState = GameState()
         initState.initialize(layout, len(ghostAgents))
+        
+        # AVD
         game = Game(agents, display, self, catchExceptions=catchExceptions)
         game.state = initState
         self.initialState = initState.deepCopy()
@@ -926,6 +939,11 @@ def runGames(
             layout, pacman, ghosts, gameDisplay, beQuiet, catchExceptions
         )
         game.run()
+        #print(game.agents[0].qValues)
+        # AVD - only save the last training
+        if i == numTraining - 1:
+            with open('cross_q_table.json', 'w') as fp:
+                json.dump(game.agents[0].qValues, fp,sort_keys=True,  indent=4)
         if not beQuiet:
             games.append(game)
 
