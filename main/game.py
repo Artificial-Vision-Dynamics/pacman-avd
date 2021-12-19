@@ -642,7 +642,7 @@ class Game(object):
         sys.stdout = OLD_STDOUT
         sys.stderr = OLD_STDERR
 
-    def run(self):
+    def run(self, load_qtable, qtable_filename):
         """
         Main control loop for game play.
         """
@@ -651,6 +651,11 @@ class Game(object):
 
         ###self.display.initialize(self.state.makeObservation(1).data)
         # inform learning agents of the game start
+        # AVD
+        if load_qtable:
+            # se añade al pacman
+            self.agents[0].set_qtable(qtable_filename)
+
         for i in range(len(self.agents)):
             agent = self.agents[i]
             if not agent:

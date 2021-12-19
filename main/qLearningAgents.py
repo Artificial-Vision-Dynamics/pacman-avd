@@ -10,7 +10,7 @@ from game import *
 from learningAgents import ReinforcementAgent
 from featureExtractors import *
 
-import random,util,math
+import random,util,math, json
 
 
 #AVD Class - Rodrigo - Obtiene estado visible
@@ -131,6 +131,12 @@ class avdQLearningAgent(ReinforcementAgent):
     #print("VALUE", self.getValue(nextState))
     self.qValues[state.__visible_state_hash__() + '|' + action] = self.getQValue(state, action) + self.alpha * (reward + self.discount * self.getValue(nextState) - self.getQValue(state, action))
 
+  def set_qtable(self, filename):
+    
+    with open(filename + '.json') as json_file:
+      data = json.load(json_file)
+      self.qValues = util.Counter(data)
+
 class CrossQLearningAgent(avdQLearningAgent):
   '''
     AVD CROSS QLEARNINGAGENT
@@ -152,6 +158,9 @@ class CrossQLearningAgent(avdQLearningAgent):
     action = avdQLearningAgent.getAction(self,state)
     self.doAction(state,action)
     return action
+
+  def set_qtable(self, filename):
+    avdQLearningAgent.set_qtable(self, filename)
 
 class QLearningAgent(ReinforcementAgent):
   """

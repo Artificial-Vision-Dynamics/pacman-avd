@@ -782,6 +782,28 @@ def readCommand(argv):
         ),
         default=30,
     )
+    parser.add_option(
+        "--qtable_file",
+        dest="qtable_filename",
+        type="string",
+        help="Filename to store/read the qtable",
+        default='cross_q_table',
+    )
+    parser.add_option(
+        "-s",
+        "--save_qtable",
+        action="store_true",
+        dest="save_qtable",
+        help="Turns on save_qtable",
+        default=False,
+    )
+    parser.add_option(  
+        "--load_qtable",
+        action="store_true",
+        dest="load_qtable",
+        help="Turns on load_qtable",
+        default=False,
+    )          
 
     options, otherjunk = parser.parse_args(argv)
     if len(otherjunk) != 0:
@@ -839,6 +861,10 @@ def readCommand(argv):
     args["record"] = options.record
     args["catchExceptions"] = options.catchExceptions
     args["timeout"] = options.timeout
+    # AVD
+    args["save_qtable"] = options.save_qtable
+    args["qtable_filename"] = 'qtables/' + options.qtable_filename
+    args["load_qtable"] = options.load_qtable
 
     # Special case: recorded games don't use the runGames method or args structure
     if options.gameToReplay != None:
@@ -916,6 +942,9 @@ def runGames(
     numTraining=0,
     catchExceptions=False,
     timeout=30,
+    qtable_filename='cross_q_table', 
+    save_qtable=False,
+    load_qtable=False
 ):
     import __main__
 
@@ -935,15 +964,18 @@ def runGames(
         else:
             gameDisplay = display
             rules.quiet = False
+  
         game = rules.newGame(
             layout, pacman, ghosts, gameDisplay, beQuiet, catchExceptions
         )
-        game.run()
+        # AVD
+        game.run(load_qtable, qtable_filename)
+
         #print(game.agents[0].qValues)
         # AVD - only save the last training
-        if i == numTraining - 1:
-            with open('cross_q_table.json', 'w') as fp:
-                json.dump(game.agents[0].qValues, fp,sort_keys=True,  indent=4)
+        if i == numTraining - 1 and save_qtable:
+            with open(qtable_filename + '.json', 'w') as fp:
+                json.dump(game.agents[0].qValues, fp, sort_keys=True,  indent=4)
         if not beQuiet:
             games.append(game)
 
