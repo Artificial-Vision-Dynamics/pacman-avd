@@ -53,8 +53,9 @@ class avdQLearningAgent(ReinforcementAgent):
     """
     "*** YOUR CODE HERE ***"
     state.getVisibleState()
-    #print(self.qValues)
+    #print(state)
     hash = state.__visible_state_hash__() + '|' + action
+    #print(hash)
     return self.qValues[hash]
 
 

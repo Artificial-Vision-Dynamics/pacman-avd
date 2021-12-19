@@ -238,8 +238,8 @@ class GameState(object):
         '''
         # Config parameters
         shape = 'cross'
-        widthRange = 2
-        heightRange = 2
+        widthRange = 3
+        heightRange = 3
 
         # Getting info from the state
         currentFood = self.getFood()
@@ -281,12 +281,16 @@ class GameState(object):
             elif walls.data[px][py] == True:
                 self.data.visState.append('w')
             else:
+                ghost_found = False
                 for ghostPos in ghosts:
-                    if square == ghostPos:
+                    #print('square ', square, ' -- ghostpos ',ghostPos)
+                    if (square[0], square[1]) == ghostPos:
                         self.data.visState.append('g')
+                        ghost_found = True
                         break
 
-                self.data.visState.append('e')
+                if not ghost_found:
+                    self.data.visState.append('e')
 
         # el estado eje horizontal de la cruz y luego eje vertical
         #print('Current state')
