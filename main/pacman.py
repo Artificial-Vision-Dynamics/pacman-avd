@@ -276,7 +276,7 @@ class GameState(object):
             elif py >= currentFood.height:
                 self.data.visState.append('w')
                 continue
-            elif currentFood.data[px][py] == True:
+            elif currentFood.data[px][py] == True and not ((px,py) in ghosts):
                 self.data.visState.append('f')
             elif walls.data[px][py] == True:
                 self.data.visState.append('w')

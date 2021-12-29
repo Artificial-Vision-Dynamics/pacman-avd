@@ -124,7 +124,8 @@ class ReinforcementAgent(ValueEstimationAgent):
     	NOTE: Do *not* override or call this function
     """
     self.episodeRewards += deltaReward
-    self.update(state,action,nextState,deltaReward)
+    if self.isInTraining():
+      self.update(state,action,nextState,deltaReward)
 
   def startEpisode(self):
     """
@@ -149,10 +150,10 @@ class ReinforcementAgent(ValueEstimationAgent):
       self.alpha = 0.0      # no learning
 
   def isInTraining(self):
-      return self.episodesSoFar < self.numTraining
+    return self.episodesSoFar < self.numTraining
 
   def isInTesting(self):
-      return not self.isInTraining()
+    return not self.isInTraining()
 
   def __init__(self, actionFn = None, numTraining=100, epsilon=0.5, alpha=0.5, gamma=1):
     """
@@ -197,14 +198,23 @@ class ReinforcementAgent(ValueEstimationAgent):
   ###################
   # Pacman Specific #
   ###################
+
+  # AVD - Rodrigo - Modificación para no estarse quieto
   def observationFunction(self, state):
     """
         This is where we ended up after our last action.
         The simulation should somehow ensure this is called
     """
     if not self.lastState is None:
-        reward = state.getScore() - self.lastState.getScore()
-        self.observeTransition(self.lastState, self.lastAction, state, reward)
+      #state.getVisibleState()
+      #print(state.__visible_state_hash__() + '|' + self.lastAction)
+      #print('Last action: ', self.lastAction)
+      reward = (state.getScore() - self.lastState.getScore())
+      
+      if self.lastAction == 'Stop' and reward < 0 and abs(reward) < 100:
+        reward = reward*20 # se penaliza por 2 estarse quieto, así le hacemos moverse      
+      #print(reward)  
+      self.observeTransition(self.lastState, self.lastAction, state, reward)
     return state
 
   def registerInitialState(self, state):

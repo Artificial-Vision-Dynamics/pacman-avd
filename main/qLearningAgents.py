@@ -68,9 +68,9 @@ class avdQLearningAgent(ReinforcementAgent):
     """
     "*** YOUR CODE HERE ***"
     possibleStateQValues = util.Counter()
-    for action in self.getLegalActions(state):
-    	possibleStateQValues[action] = self.getQValue(state, action)
-    
+ 
+    for action in self.getLegalActions(state):      
+      possibleStateQValues[action] = self.getQValue(state, action)         
     return possibleStateQValues[possibleStateQValues.argMax()]
 
   def getPolicy(self, state):
@@ -83,15 +83,21 @@ class avdQLearningAgent(ReinforcementAgent):
     possibleStateQValues = util.Counter()
     possibleActions = self.getLegalActions(state)
     if len(possibleActions) == 0:
-    	return None
-    
+      return None
+
+    #print(state)
+    #state.getVisibleState()
+    #print(state.__visible_state_hash__())
+    #print('Legal actions: ')   
+        
     for action in possibleActions:
-    	possibleStateQValues[action] = self.getQValue(state, action)
-    
+      possibleStateQValues[action] = self.getQValue(state, action)
+      #print('Action: ', action, ' -- QValue: ', possibleStateQValues[action])
+      
     if possibleStateQValues.totalCount() == 0:
-    	return random.choice(possibleActions)
+      return random.choice(possibleActions)
     else:
-    	return possibleStateQValues.argMax()
+      return possibleStateQValues.argMax()
 
   def getAction(self, state):
     """
@@ -107,12 +113,13 @@ class avdQLearningAgent(ReinforcementAgent):
     # Pick Action
     legalActions = self.getLegalActions(state)
     action = None
+
     "*** YOUR CODE HERE ***"
     if len(legalActions) > 0:
-    	if util.flipCoin(self.epsilon):
-    		action = random.choice(legalActions)
-    	else:
-            action = self.getPolicy(state)
+      if util.flipCoin(self.epsilon):
+        action = random.choice(legalActions)
+      else:
+        action = self.getPolicy(state)
 
     return action
     

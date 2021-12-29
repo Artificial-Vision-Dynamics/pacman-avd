@@ -1,0 +1,16 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: pacman.py",
+            "type": "python",
+            "request": "launch",
+            "program": "C:/Users/Rodrigo Sanchez/Documents/GitHub/pacman-avd/main/pacman.py",
+            "args": ["-p", "CrossQLearningAgent", "-n", "1090", "-l", "smallClassic", "--qtable_file" , "cross_1x1_qtable", "--load_qtable"],
+            "console": "integratedTerminal"
+        }
+    ]
+}
