@@ -237,7 +237,7 @@ class GameState(object):
         Returns the content of the adjacent squares
         '''
         # Config parameters
-        shape = 'cross'
+        shape = 'square'
         widthRange = 3
         heightRange = 3
 
@@ -254,14 +254,18 @@ class GameState(object):
             listY = list(range(pos[1] - heightRange, pos[1]))
             listY.extend(list(range(pos[1] + 1, pos[1] + heightRange + 1)))
 
-            obsArea = []
+        elif shape == 'square':
+            listX = list(range(pos[0] - widthRange, pos[0] + widthRange + 1))
+            listY = list(range(pos[1] - heightRange, pos[1] + heightRange + 1))
 
-            y = pos[1]
-            for x in listX:
-                obsArea.append([x, y])
-            x = pos[0]
-            for y in listY:
-                obsArea.append([x, y])
+        obsArea = []
+
+        y = pos[1]
+        for x in listX:
+            obsArea.append([x, y])
+        x = pos[0]
+        for y in listY:
+            obsArea.append([x, y])
         
         # Observable state
         self.data.visState = []
