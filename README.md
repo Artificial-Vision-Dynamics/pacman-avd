@@ -11,6 +11,10 @@ To run QlEARNING, you can choose the map with -l <map_name>
 
 --load_qtable load the qtable for the very first game [if training, uses it to train and if playing, uses it to play]. If training and not provided, trains from an empty qtable
 
+To run, you must get into main folder:
+``` 
+cd main/
+````
 
 Train and save [if do not want to save, just not add the last arguments]:
 ```
