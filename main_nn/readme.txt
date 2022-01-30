@@ -3,7 +3,7 @@ Hay dos redes neuronales de diferente arquitectura:
 - Dos capas con 5 hidden layers cada una
 
 Se intenta coger la red definida si hay archivos llamados network.json y weights.h5 en la carpeta.
-Si no encuentra ninguno, crea una red nueva con la configuración que esté puesta.
+Si no encuentra ninguno, crea una red nueva con la arquitectura que esté definida.
 
 Hay una opción de trainingOnline:
 - Si está en False, la red predice las acciones según sus Qvalues y no entrena.
