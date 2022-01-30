@@ -9,4 +9,4 @@ Hay una opción de trainingOnline:
 - Si está en False, la red predice las acciones según sus Qvalues y no entrena.
 - Si está en True, se hacen acciones random para ganar experiencias y entrenar.
 
-python pacman.py -q PacmanQAgent -l mediumClassic -n 10
+python pacman.py -p PacmanQAgent -l mediumClassic -n 10
