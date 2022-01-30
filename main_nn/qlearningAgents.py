@@ -74,7 +74,7 @@ class QLearningAgent(ReinforcementAgent):
 			ghost = self.getClosestGhost(state, Directions.STOP)
 			if ghost != None and ghost.scaredTimer > 0:
 				x[0][6] = 1
-	
+			
 		return x
 
 	def getQValue(self, state, action):
@@ -510,7 +510,7 @@ class QLearningAgent(ReinforcementAgent):
 class PacmanQAgent(QLearningAgent):
 	"Exactly the same as QLearningAgent, but with different default parameters"
 
-	def __init__(self, epsilon=0.05, gamma=0.8, alpha=0.2, numTraining=1000, **args):
+	def __init__(self, epsilon=0.05, gamma=0.8, alpha=0.2, numTraining=10, **args):
 		"""
 		These default parameters can be changed from the pacman.py command line.
 		For example, to change the exploration rate, try:
@@ -543,17 +543,17 @@ class PacmanQAgent(QLearningAgent):
 
 		# exploration rate that the model will end with after @decayPeriod episodes
 		# if @decayExplorationOnEpisode is False, the exploration rate will be set to this one for all episodes
-		self.finalExplorationRate = 1.0
+		self.finalExplorationRate = 0.8
 
 		# controls if the exploration rate should decrease for each episode
-		self.decayExplorationOnEpisode = False
+		self.decayExplorationOnEpisode = True
 
 		# number of games in which the exploration rate decreases linearly from @initialExplorationRate to @finalExplorationRate
 		self.decayPeriod = 20
 
 			# training settings
 		# determines if pacman will be training between turns or not
-		self.trainOnline = False	
+		self.trainOnline = True	
 	
 		# controls if loss values for each training session should print to screen
 		self.verboseTraining = True	
@@ -562,7 +562,7 @@ class PacmanQAgent(QLearningAgent):
 		self.displayWeights = False
 
 		# size of training batch for each training session
-		self.batchSize = 10			
+		self.batchSize = 50			
 
 			# experience replay settings
 
@@ -571,7 +571,7 @@ class PacmanQAgent(QLearningAgent):
 
 		# maximum number of transitions the experience list can hold
 		# exceeding it will completely clear @experiences
-		self.maximumExperienceSize = 10000
+		self.maximumExperienceSize = 100000
 
 		# minimum number of transitions needed to start a training session
 		# if having less, no training will be done for this turn
@@ -581,7 +581,8 @@ class PacmanQAgent(QLearningAgent):
 		# network dimensions
 		self.inputDim = 7	
 		self.outputDim = 1
-		self.hiddenUnits = 10	
+		# self.hiddenUnits = 10
+		self.hiddenUnits = 5	
 
 		# constructs a network if there is none
 		if not os.path.isfile('./network.json'):
@@ -589,14 +590,23 @@ class PacmanQAgent(QLearningAgent):
 			print('Initializing network ...')
 			self.network = Sequential()
 
-			# specify input layer and add a hidden layer, add activation function and a single neural output layer
+			## Red de una sola capa
+			# self.network.add(Dense(self.hiddenUnits, input_dim=self.inputDim, kernel_initializer="uniform"))
+			# self.network.add(Activation('relu'))
+			# self.network.add(Dense(self.outputDim, kernel_initializer="uniform"))
+
+			# Red de dos capas
 			self.network.add(Dense(self.hiddenUnits, input_dim=self.inputDim, kernel_initializer="uniform"))
+			self.network.add(Activation('relu'))
+			self.network.add(Dense(self.hiddenUnits, input_dim=self.hiddenUnits, kernel_initializer="uniform"))
 			self.network.add(Activation('relu'))
 			self.network.add(Dense(self.outputDim, kernel_initializer="uniform"))
 
 			# define @optimizer and compile the network
-			sgd = SGD(learning_rate=0.0002, decay=1e-6, momentum=0.95, nesterov=True)
-			self.network.compile(loss='mean_squared_error', optimizer=sgd)
+			# sgd = SGD(learning_rate=0.0002, decay=1e-6, momentum=0.95, nesterov=True)
+			adam = keras.optimizers.Adam(learning_rate=0.01, decay=1e-6)
+			# self.network.compile(loss='mean_squared_error', optimizer=sgd)
+			self.network.compile(loss='mean_squared_error', optimizer=adam)
 			self.network.summary()
 
 			# save network and weights
@@ -608,10 +618,12 @@ class PacmanQAgent(QLearningAgent):
 			print('Loading network ...')
 			self.network = model_from_json(open('network.json').read())
 
-			sgd = SGD(learning_rate=0.0002, decay=1e-6, momentum=0.95, nesterov=True)
+			# sgd = SGD(learning_rate=0.0002, decay=1e-6, momentum=0.95, nesterov=True)
 			self.network.load_weights('weights.h5')
 			print(self.network.get_weights())
-			self.network.compile(loss='mean_squared_error', optimizer=sgd)
+			adam = keras.optimizers.Adam(learning_rate=0.01, decay=1e-6)
+			# self.network.compile(loss='mean_squared_error', optimizer=sgd)
+			self.network.compile(loss='mean_squared_error', optimizer=adam)
 			self.network.summary()
 
 		print('Network is ready to use.')
@@ -623,6 +635,9 @@ class PacmanQAgent(QLearningAgent):
 		informs parent of action for Pacman.  Do not change or remove this
 		method.
 		"""
-		action = QLearningAgent.getPolicy(self,state)
+		if self.trainOnline:
+			action = QLearningAgent.getPolicy(self,state)
+		else:
+			action = QLearningAgent.getPolicy(self,state)
 		self.doAction(state,action)
 		return action
