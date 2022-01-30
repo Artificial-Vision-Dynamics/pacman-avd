@@ -553,7 +553,7 @@ class PacmanQAgent(QLearningAgent):
 
 			# training settings
 		# determines if pacman will be training between turns or not
-		self.trainOnline = True	
+		self.trainOnline = False	
 	
 		# controls if loss values for each training session should print to screen
 		self.verboseTraining = True	
@@ -636,7 +636,7 @@ class PacmanQAgent(QLearningAgent):
 		method.
 		"""
 		if self.trainOnline:
-			action = QLearningAgent.getPolicy(self,state)
+			action = QLearningAgent.getAction(self,state)
 		else:
 			action = QLearningAgent.getPolicy(self,state)
 		self.doAction(state,action)
