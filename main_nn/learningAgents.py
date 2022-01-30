@@ -220,6 +220,8 @@ class ReinforcementAgent(ValueEstimationAgent):
 		"""
 		if not self.lastState is None:
 			reward = state.getScore() - self.lastState.getScore()
+			if self.lastAction == 'Stop' and reward < 0 and abs(reward) < 100:
+				reward = reward*20
 			self.observeTransition(self.lastState, self.lastAction, state, reward)
 		return state
 
